@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}SecurePass -- Dashboard{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:1100px;margin:40px auto;padding:0 16px;">
+  <h3 class="mb-1">📊 Analytics Dashboard</h3>
+  <p style="color:var(--text-secondary);margin-bottom:26px;">Overview of all password analyses performed so far</p>
+
+  <div class="row g-3">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.total_tested }}</div>
+        <div class="stat-label">Total Tested</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.avg_score }}</div>
+        <div class="stat-label">Average Score</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value" style="color:#ff5c5c;">{{ stats.weak_pct }}%</div>
+        <div class="stat-label">Weak Passwords</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-value" style="color:#00e5a0;">{{ stats.strong_pct }}%</div>
+        <div class="stat-label">Strong Passwords</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="chart-card">
+        <h6 style="color:var(--text-secondary);margin-bottom:14px;">Strength Distribution</h6>
+        <canvas id="strengthPieChart" height="220"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="chart-card">
+        <h6 style="color:var(--text-secondary);margin-bottom:14px;">Entropy Trend (last 30 tests)</h6>
+        <canvas id="entropyLineChart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-top:20px;">
+    <h6 style="color:var(--text-secondary);margin-bottom:14px;">Recent Password History</h6>
+    <div class="table-responsive">
+      <table class="table table-dark-custom align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Password (masked)</th>
+            <th>Score</th>
+            <th>Strength</th>
+            <th>Entropy</th>
+            <th>Flags</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            <td>{{ row['id'] }}</td>
+            <td style="letter-spacing:2px;">{{ row['password_masked'] }}</td>
+            <td>{{ row['score'] }}</td>
+            <td>{{ row['strength'] }}</td>
+            <td>{{ row['entropy'] }} bits</td>
+            <td style="font-size:0.8rem;">
+              {% if row['is_common'] %}<span class="badge bg-danger me-1">Common</span>{% endif %}
+              {% if row['has_keyboard_pattern'] %}<span class="badge bg-warning text-dark me-1">Keyboard</span>{% endif %}
+              {% if row['has_repeat'] %}<span class="badge bg-secondary me-1">Repeat</span>{% endif %}
+              {% if row['has_sequence'] %}<span class="badge bg-info text-dark me-1">Sequence</span>{% endif %}
+            </td>
+            <td style="font-size:0.8rem;color:var(--text-secondary);">{{ row['created_at'] }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7" style="text-align:center;color:var(--text-secondary);padding:24px;">No passwords analyzed yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const strengthCounts = {{ stats.strength_counts | tojson }};
+  const entropyHistory = {{ stats.entropy_history | tojson }};
+  const entropyLabels = {{ stats.entropy_labels | tojson }};
+
+  new Chart(document.getElementById("strengthPieChart"), {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(strengthCounts),
+      datasets: [{
+        data: Object.values(strengthCounts),
+        backgroundColor: ["#ff5c5c", "#ff8a3d", "#ffb100", "#4da6ff", "#00e5a0"],
+        borderColor: "#161b22",
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      plugins: {
+        legend: { labels: { color: "#e6edf3" } },
+      },
+    },
+  });
+
+  new Chart(document.getElementById("entropyLineChart"), {
+    type: "line",
+    data: {
+      labels: entropyLabels,
+      datasets: [{
+        label: "Entropy (bits)",
+        data: entropyHistory,
+        borderColor: "#00e5a0",
+        backgroundColor: "rgba(0,229,160,0.15)",
+        tension: 0.35,
+        fill: true,
+        pointRadius: 3,
+      }],
+    },
+    options: {
+      scales: {
+        x: { ticks: { color: "#8b949e" }, grid: { color: "#2a3340" } },
+        y: { ticks: { color: "#8b949e" }, grid: { color: "#2a3340" } },
+      },
+      plugins: {
+        legend: { labels: { color: "#e6edf3" } },
+      },
+    },
+  });
+</script>
+{% endblock %}

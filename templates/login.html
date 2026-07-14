@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}SecurePass -- Admin Login{% endblock %}
+
+{% block content %}
+<div class="main-container login-card">
+  <div class="card-custom">
+    <h3 class="page-title">Admin Login</h3>
+    <p class="page-subtitle">Access the analytics dashboard</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert-custom">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <input type="text" name="username" class="form-control-dark" placeholder="Username" required autofocus>
+      <input type="password" name="password" class="form-control-dark" placeholder="Password" required>
+      <button type="submit" class="btn-analyze">Login</button>
+    </form>
+
+    <p style="text-align:center;margin-top:16px;font-size:0.82rem;color:var(--text-secondary);">
+      Default demo credentials: <strong>admin / admin123</strong> (change in config.py)
+    </p>
+  </div>
+</div>
+{% endblock %}

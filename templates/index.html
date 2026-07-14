@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}SecurePass -- Analyzer{% endblock %}
+
+{% block content %}
+<div class="main-container">
+  <div class="card-custom">
+    <h2 class="page-title">🔐 Secure<span class="accent">Pass</span></h2>
+    <p class="page-subtitle">AI Inspired Password Strength Analyzer</p>
+
+    <label class="mb-2" style="font-size:0.9rem;color:var(--text-secondary);">Enter Password</label>
+    <div class="password-input-wrapper">
+      <input type="password" id="passwordInput" placeholder="Type or paste a password..." autocomplete="off" />
+      <span class="toggle-eye" id="toggleEye">👁</span>
+    </div>
+
+    <button class="btn-analyze" id="analyzeBtn">Analyze</button>
+
+    <div class="results-wrapper" id="resultsWrapper">
+      <hr style="border-color: var(--border-color); margin: 26px 0 18px;">
+
+      <h6 style="color:var(--text-secondary);text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;">Policy Checks</h6>
+      <div class="check-grid" id="checkGrid"></div>
+
+      <h6 style="color:var(--text-secondary);text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;margin-top:20px;">Attack Simulation</h6>
+      <div class="info-grid" id="infoGrid"></div>
+
+      <div class="meter-section">
+        <div class="meter-label-row">
+          <span>Strength Meter</span>
+          <span id="meterLabel">-</span>
+        </div>
+        <div class="meter-bar-bg">
+          <div class="meter-bar-fill" id="meterFill" style="width:0%;"></div>
+        </div>
+      </div>
+
+      <div class="score-row">
+        <div>
+          <span class="score-number" id="scoreNumber">0</span>
+          <span class="score-max">/ 100</span>
+        </div>
+        <span class="strength-badge" id="strengthBadge">-</span>
+      </div>
+
+      <p style="margin-top:14px;font-size:0.88rem;color:var(--text-secondary);">
+        Estimated offline crack time: <strong id="crackTime" style="color:var(--text-primary);">-</strong>
+      </p>
+
+      <div class="suggestions-box">
+        <h6>💡 Suggestions</h6>
+        <ul id="suggestionsList"></ul>
+      </div>
+
+      <button class="btn-download" id="downloadBtn">📄 Download PDF Report</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}
