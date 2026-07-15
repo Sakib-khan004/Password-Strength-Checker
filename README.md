@@ -1,4 +1,4 @@
-# 🔐 SecurePass -- Password Strength Analyzer
+# 🔐 SecurePass -- SecurePass - Advanced Password Strength Analyzer
 
 SecurePass is a full-stack Flask web application that analyzes password strength using
 multiple security heuristics: entropy calculation, policy checks, common-password
