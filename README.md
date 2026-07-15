@@ -154,8 +154,7 @@ Final score is clamped between 0 and 100.
   understand what makes passwords weak or strong. It does not perform any real attacks
   against live systems.
 - Change `SECRET_KEY`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD` in `config.py` (or via
-  environment variables) before deploying anywhere beyond local/personal use.
-
+  environment variables) Demo credentials for local testing only.
 ---
 
 ## 📸 Screenshots
